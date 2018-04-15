@@ -1,0 +1,11 @@
+{
+  "name": "ERC20-testing",
+  "version": "1.0.0",
+  "description": "holy shit",
+  "main": "index.js",
+  "author": "Polar Yu",
+  "license": "MIT",
+  "dependencies": {
+    "web3": "^1.0.0-beta.33"
+  }
+}

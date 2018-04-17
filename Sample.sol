@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.21;
 
 // ----------------------------------------------------------------------------
 // 'FIXED' 'Example Fixed Supply Token' token contract
@@ -43,11 +43,11 @@ library SafeMath {
 // ----------------------------------------------------------------------------
 interface ERC20 {
     function totalSupply() external constant returns (uint);
-    function balanceOf(address tokenOwner) external constant returns (uint balance);
-    function allowance(address tokenOwner, address spender) external constant returns (uint remaining);
-    function transfer(address to, uint tokens) external returns (bool success);
-    function approve(address spender, uint tokens) external returns (bool success);
-    function transferFrom(address from, address to, uint tokens) external returns (bool success);
+    function balanceOf(address tokenOwner) external constant returns (uint);
+    function allowance(address tokenOwner, address spender) external constant returns (uint);
+    function transfer(address to, uint tokens) external returns (bool);
+    function approve(address spender, uint tokens) external returns (bool);
+    function transferFrom(address from, address to, uint tokens) external returns (bool);
 
     event Transfer(address indexed from, address indexed to, uint tokens);
     event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
@@ -134,7 +134,7 @@ contract FixedSupplyToken is ERC20, Owned {
     // ------------------------------------------------------------------------
     // Get the token balance for account `tokenOwner`
     // ------------------------------------------------------------------------
-    function balanceOf(address tokenOwner) external constant returns (uint balance) {
+    function balanceOf(address tokenOwner) external constant returns (uint) {
         return balances[tokenOwner];
     }
 
@@ -144,7 +144,7 @@ contract FixedSupplyToken is ERC20, Owned {
     // - Owner's account must have sufficient balance to transfer
     // - 0 value transfers are allowed
     // ------------------------------------------------------------------------
-    function transfer(address to, uint tokens) external returns (bool success) {
+    function transfer(address to, uint tokens) external returns (bool) {
         balances[msg.sender] = balances[msg.sender].sub(tokens);
         balances[to] = balances[to].add(tokens);
         emit Transfer(msg.sender, to, tokens);
@@ -160,7 +160,7 @@ contract FixedSupplyToken is ERC20, Owned {
     // recommends that there are no checks for the approval double-spend attack
     // as this should be implemented in user interfaces 
     // ------------------------------------------------------------------------
-    function approve(address spender, uint tokens) external returns (bool success) {
+    function approve(address spender, uint tokens) external returns (bool) {
         allowed[msg.sender][spender] = tokens;
         emit Approval(msg.sender, spender, tokens);
         return true;
@@ -176,7 +176,7 @@ contract FixedSupplyToken is ERC20, Owned {
     // - Spender must have sufficient allowance to transfer
     // - 0 value transfers are allowed
     // ------------------------------------------------------------------------
-    function transferFrom(address from, address to, uint tokens) external returns (bool success) {
+    function transferFrom(address from, address to, uint tokens) external returns (bool) {
         balances[from] = balances[from].sub(tokens);
         allowed[from][msg.sender] = allowed[from][msg.sender].sub(tokens);
         balances[to] = balances[to].add(tokens);
@@ -189,7 +189,7 @@ contract FixedSupplyToken is ERC20, Owned {
     // Returns the amount of tokens approved by the owner that can be
     // transferred to the spender's account
     // ------------------------------------------------------------------------
-    function allowance(address tokenOwner, address spender) external constant returns (uint remaining) {
+    function allowance(address tokenOwner, address spender) external constant returns (uint) {
         return allowed[tokenOwner][spender];
     }
 
@@ -199,7 +199,7 @@ contract FixedSupplyToken is ERC20, Owned {
     // from the token owner's account. The `spender` contract function
     // `receiveApproval(...)` is then executed
     // ------------------------------------------------------------------------
-    function approveAndCall(address spender, uint tokens, bytes data) public returns (bool success) {
+    function approveAndCall(address spender, uint tokens, bytes data) public returns (bool) {
         allowed[msg.sender][spender] = tokens;
         emit Approval(msg.sender, spender, tokens);
         ApproveAndCallFallBack(spender).receiveApproval(msg.sender, tokens, this, data);
@@ -218,7 +218,7 @@ contract FixedSupplyToken is ERC20, Owned {
     // ------------------------------------------------------------------------
     // Owner can transfer out any accidentally sent ERC20 tokens
     // ------------------------------------------------------------------------
-    function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns (bool success) {
+    function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns (bool) {
         return ERC20(tokenAddress).transfer(owner, tokens);
     }
 }
@@ -230,7 +230,7 @@ contract RentLocker {
     address public tokenAddress;
     
     string public name;
-    string public message = 'nobody';
+    string public message = "nobody";
     uint256 public endTime;
     uint256 public rentPrice = 7;
     
@@ -248,7 +248,7 @@ contract RentLocker {
         owner = msg.sender;
         message = "someone in";
     }
-    
+
     function checkout() public {
         require(msg.sender == owner || msg.sender == admin);
         owner = address(0);
